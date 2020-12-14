@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <!-- Adding Stylesheet and Bootstrap-->
+  {% include "bootstrap.html" %}
+  <meta charset="utf-8">
+  <title>My House</title>
+</head>
+  <body>
+    {% include "navigation.html" %}
+    <div class="text-center">
+      <a class="save btn btn-default" href="{% url 'join_group' %}">join_group</a>
+    </div>
+  </body>
+</html>
