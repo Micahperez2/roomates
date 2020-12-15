@@ -5,11 +5,17 @@ from django.http import HttpResponseRedirect, HttpResponse
 from core.models import UserProfile
 from core.forms import JoinForm, LoginForm
 from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
+from house.models import Group, Group_User
 # Create your views here.
 
 @login_required(login_url='/login/')
 def home(request):
+    #Group_User.objects.all().delete()
+    try:
+        (Group_User.objects.get(User_id=request.user.id))
+    except:
+        Group_User(User = User.objects.get(id=request.user.id), Group_Name = "NULL").save()
+    #Group_User(User = request.user, Group_Name = "NULL", ID = (request.user.id), Name = (request.user)).save()
     return render(request, 'core/home.html')
 
 def join(request):

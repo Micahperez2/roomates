@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'core',
     'house',
     'assignments',
-    'rest_framework'
+    'rest_framework',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
