@@ -3,10 +3,70 @@
 <head>
    <!-- Adding Stylesheet and Bootstrap-->
   {% include "bootstrap.html" %}
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+  <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
   <meta charset="utf-8">
   <title>Home Page</title>
 </head>
 <body>
 {% include "navigation.html" %}
+<div class="col-md-3">
+</div>
+<div class="row">
+  <div class="col-md-8 ">
+    <div class="container-fluid">
+      <div class="jumbotron">
+        <div align="center">
+          <h3>Group Members By Total Assignment Time</h3>
+          <div class="ct-chart ct-perfect-fourth"></div>
+          <th>
+            <a class="save btn btn-default" v href="{% url 'house'  %}" name='edit'>To Group</a>
+        </th>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
+  <div class="text-center">
+    <a class="btn btn-link" href="{% url 'add_assignment' %}">Add Assignment</a>
+  </div>
 </html>
+<style>
+.ct-label {
+  font-size: 35px;
+  color: white;
+}
+</style>
+<script>
+var data = {
+  labels: [{% for user in group_users %}'{{ user.User.first_name }}',{% endfor %}],
+
+
+  series: [{% for user in user_min %}'{{ user.Time }}',{% endfor %}]
+
+};
+
+var options = {
+  labelInterpolationFnc: function(value) {
+    return value[0]
+  }
+};
+
+var responsiveOptions = [
+  ['screen and (min-width: 640px)', {
+    chartPadding: 30,
+    labelOffset: 200,
+    labelDirection: 'explode',
+    labelInterpolationFnc: function(value) {
+      return value;
+    }
+  }],
+  ['screen and (min-width: 1024px)', {
+    labelOffset: 80,
+    chartPadding: 20
+  }]
+];
+
+new Chartist.Pie('.ct-chart', data, options, responsiveOptions);
+</script>

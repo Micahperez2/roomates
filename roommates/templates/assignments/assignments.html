@@ -3,10 +3,73 @@
 <head>
    <!-- Adding Stylesheet and Bootstrap-->
   {% include "bootstrap.html" %}
+  {% load static %}
+  {% include "core/sharedlinks.html" %}
   <meta charset="utf-8">
   <title>My Assignments</title>
 </head>
 <body>
 {% include "navigation.html" %}
+    <div class="container" align="center">
+      <h2> Assignments for {{current_user.first_name}} {{current_user.last_name}} </h2>
+      <br></br>
+      <table style="width:100%"  class="table">
+      <thead>
+          <tr>
+            <th scope="col"> Assignment Name </th>
+            <th scope="col"> Assignment Description </th>
+            <th scope="col"> Estimated Time </th>
+            <th scope="col"> Completed </th>
+            <th scope="col"> Delete </th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for assignment in Assignments %}
+        {% if assignment.User.id == current_user.id %}
+          <tr>
+            <th> {{ assignment.Assignment_Name }} </th>
+            <th> {{ assignment.Assignment_Description }} </th>
+            <th> {{ assignment.Estimated_Time }} Minutes </th>
+            {% if assignment.Completed == 'No' %}
+            <form method="POST" class="post-form" >{% csrf_token %}
+              <th>  <button type="submit" class="save btn btn-default" name="location" style="color: red" value= "{{ assignment.pk}}">{{ assignment.Completed }}</button> </th>
+            </form>
+            {% else %}
+            <form method="POST" class="post-form" >{% csrf_token %}
+              <th>  <button type="submit" class="save btn btn-default" name="location" style="color: green" value= "{{ assignment.pk}}">{{ assignment.Completed }}</button> </th>
+            </form>
+          {% endif %}
+          <th>
+            <form method="GET" class="delete">{% csrf_token %}
+              <a class="btn btn-primary" href="#" onclick="confirmDeleteModal({{ assignment.pk }})">Delete</a>
+          </form>
+        </th>
+      </tr>
+        {% endif %}
+      {% endfor %}
+      </tbody>
+      </table>
+    </div>
+    <!-- Modal -->
+  <div id="deleteModal" tabindex="-1" class="modal" role='dialog'>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete Task</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Do you really want to delete this task?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <span id= 'deleteButton'></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Modal ends here--->
 </body>
 </html>

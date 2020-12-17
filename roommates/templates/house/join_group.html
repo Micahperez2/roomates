@@ -16,7 +16,7 @@
     <tr>
       <th scope="col">Group Name</th>
       <th scope="col">House Type</th>
-      <th scope="col">Members</th>
+      <th scope="col"> Members </th>
       <th scope="col">Join</th>
     </tr>
 </thead>
@@ -25,15 +25,23 @@
 <tr>
   <th> {{ group.Group_Name }} </th>
   <th> {{ group.Housing_Type }} </th>
-  <th> Members </th>
+  <th scope="col">
+  {% for member in members %}
+    {% if member.Group_Name == group.Group_Name %}
+      {{ member.User.first_name}}
+    {% endif %}
+  {% endfor %}
+  </th>
+
   <th>
-    <form method="POST" class="join_group">{% csrf_token %}
-      <a class="save btn btn-default" value="{{ group.pk }}" href="{% url 'house' %}" name='join'>Join</a>
+    <form method="get" class="Join_Group">{% csrf_token %}
+      <button class="save btn btn-default" name = "join_group" value="{{ group.Group_Name }}" name='join'>Join</button>
     </form>
   </th>
 </tr>
 {% endfor %}
 </tbody>
 </table>
+<a class="btn btn-link" href="{% url 'house' %}" >Back To House Page</a>
 </body>
 </html>

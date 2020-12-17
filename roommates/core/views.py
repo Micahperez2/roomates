@@ -2,21 +2,42 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponse
-from core.models import UserProfile
-from core.forms import JoinForm, LoginForm
+from core.models import UserProfile, User_Minutes
+from core.forms import JoinForm, LoginForm, Add_Assignment
 from django.contrib.auth.models import User
-from house.models import Group, Group_User
+from house.models import Group, Group_User, Group_Field, Group_Category, Assignment
 # Create your views here.
 
 @login_required(login_url='/login/')
 def home(request):
-    #Group_User.objects.all().delete()
+    User_Minutes.objects.all().delete()
     try:
         (Group_User.objects.get(User_id=request.user.id))
     except:
         Group_User(User = User.objects.get(id=request.user.id), Group_Name = "NULL").save()
-    #Group_User(User = request.user, Group_Name = "NULL", ID = (request.user.id), Name = (request.user)).save()
-    return render(request, 'core/home.html')
+    group_users = Group_User.objects.all()
+    for user in group_users:
+        User_Minutes(User=user.User, Time = 0).save()
+    for assignment in Assignment.objects.all():
+        add_to = User_Minutes.objects.filter(User = assignment.User)
+        total_time = add_to[0].Time + assignment.Estimated_Time
+        this_user = add_to[0].User
+        User_Minutes.objects.filter(User = assignment.User).delete()
+        User_Minutes(User=this_user, Time = total_time).save()
+    user_min = User_Minutes.objects.all()
+    return render(request, 'core/home.html', {'group_users':group_users, 'user_min':user_min})
+
+@login_required(login_url='/login/')
+def add_assignment(request):
+    if (request.method == 'POST' and 'Submit_Group' in request.POST):
+        form = Add_Assignment(request.POST)
+        if form.is_valid():
+            assignment_name = form.cleaned_data["Assignment_Name"]
+            assignment_description = form.cleaned_data["Assignment_Description"]
+            estimated_time = form.cleaned_data["Estimated_Time"]
+            Assignment(User = request.user, Assignment_Name=assignment_name, Assignment_Description=assignment_description, Estimated_Time=estimated_time, Completed = 'No').save()
+    assignment_form = Add_Assignment
+    return render(request, 'core/add_assignment.html', {'Add_Assignment' : Add_Assignment})
 
 def join(request):
     if (request.method == "POST"):

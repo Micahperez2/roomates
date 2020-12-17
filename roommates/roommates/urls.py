@@ -22,13 +22,16 @@ from rest_framework import routers
 
 
 router = routers.DefaultRouter()
-#router.register(r'users', house_views.UserViewSet)
-#router.register(r'home', house_views.TaskViewSet)
+router.register(r'users', house_views.UserViewSet)
+router.register(r'group', house_views.GroupViewSet)
+router.register(r'assignment', house_views.AssignmentViewSet)
+router.register(r'group-category', house_views.GroupCategoryViewSet)
 #router.register(r'assignments', assignments_views.assignmentsViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', core_views.home, name='home'),
+    path('add_assignment/', core_views.add_assignment, name='add_assignment'),
     path('house/', house_views.house, name='house'),
     path('join_group/', house_views.join_group, name='join_group'),
     path('make_group/', house_views.make_group, name='make_group'),

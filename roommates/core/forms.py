@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from house.models import Group, Group_User, Group_Field, Group_Category, Assignment
 from django import forms
 
 class JoinForm(forms.ModelForm):
@@ -15,3 +16,8 @@ class JoinForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
+
+class Add_Assignment(forms.ModelForm):
+    class Meta():
+        model = Assignment
+        fields = ('Assignment_Name', 'Assignment_Description', 'Estimated_Time' )

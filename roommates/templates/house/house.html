@@ -2,15 +2,97 @@
 <html>
 <head>
    <!-- Adding Stylesheet and Bootstrap-->
+
   {% include "bootstrap.html" %}
+  {% load static %}
+  {% include "core/sharedlinks.html" %}
   <meta charset="utf-8">
   <title>My House</title>
 </head>
   <body>
     {% include "navigation.html" %}
-    <div class="text-center">
-      <a class="save btn btn-default" href="{% url 'make_group' %}">Make Group</a>
-      <a class="save btn btn-default" href="{% url 'join_group' %}">Join Group</a>
+    <div class="container" align="center">
+      {% if current_user.Group_Name != "NULL" %}
+      <form method="GET" class ="roommate" > {% csrf_token %}
+        <h2> {{ current_user.Group_Name }} </h2>
+          {% for member in members %}
+            {% if member.Group_Name == group %}
+              <button name="roommate" value="{{ member.id }}" class="btn btn-primary" >  {{ member.User.first_name}} </button>
+            {% endif %}
+          {% endfor %}
+            <br></br>
+        </form>
+        <h3> {{user_page.User.first_name}} {{user_page.User.last_name}} </h3>
+        <h4> Username: {{user_page.User.username}} </h4>
+        <h4> Last Login: {{user_page.User.last_login}} </h4>
+        <br></br>
+        <table style="width:100%"  class="table">
+          <thead>
+              <tr>
+                <th scope="col"> Assignment Name </th>
+                <th scope="col"> Assignment Description </th>
+                <th scope="col"> Estimated Time </th>
+                <th scope="col"> Completed </th>
+              </tr>
+          </thead>
+        <tbody>
+          {% for assignment in Assignments %}
+            {% if assignment.User.id == user_page.User.id %}
+                <tr>
+                  <th> {{ assignment.Assignment_Name }} </th>
+                  <th> {{ assignment.Assignment_Description }} </th>
+                  <th> {{ assignment.Estimated_Time }} Minutes </th>
+                  {% if assignment.User.id == current_user.User.id %}
+                    {% if assignment.Completed == 'No' %}
+                    <form method="POST" class="post-form" >{% csrf_token %}
+                      <th>  <button type="submit" class="save btn btn-default" name="location" style="color: red" value= "{{ assignment.pk }}">{{ assignment.Completed }}</button> </th>
+                    </form>
+                    {% else %}
+                    <form method="POST" class="post-form" >{% csrf_token %}
+                      <th>  <button type="submit" class="save btn btn-default" name="location" style="color: green" value= "{{ assignment.pk }}">{{ assignment.Completed }}</button> </th>
+                    </form>
+                    {% endif %}
+                  {% else %}
+                    {% if assignment.Completed == 'No' %}
+                      <th style="color: red"> {{ assignment.Completed }} </th>
+                    {% else %}
+                      <th style="color: green"> {{ assignment.Completed }} </th>
+                    {% endif %}
+                </tr>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+        </tbody>
+        </table>
+        <form method="GET" class="delete">{% csrf_token %}
+          <a class="btn btn-primary" href="#" onclick="confirmDeleteModal({{ current_user.pk }})">Delete Group</a>
+        </form>
+        {% endif %}
+      <br></br>
+        <a class="btn btn-link" href="{% url 'make_group' %}">Make Group</a>
+        <a class="btn btn-link" href="{% url 'join_group' %}">Join Group</a>
+        <br></br>
     </div>
+    <!-- Modal -->
+  <div id="deleteModal" tabindex="-1" class="modal" role='dialog'>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete Task</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Do you really want to delete this task?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <span id= 'deleteButton'></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Modal ends here--->
   </body>
 </html>
